@@ -170,14 +170,7 @@ func (b *BeaconState) AppendBalance(bal uint64) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	bals := b.balances
-	if b.sharedFieldReferences[types.Balances].Refs() > 1 {
-		bals = b.balancesVal()
-		b.sharedFieldReferences[types.Balances].MinusRef()
-		b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
-	}
-
-	b.balances = append(bals, bal)
+	b.balances = append(b.balances, bal)
 	balIdx := len(b.balances) - 1
 	b.markFieldAsDirty(types.Balances)
 	b.addDirtyIndices(types.Balances, []uint64{uint64(balIdx)})
