@@ -106,15 +106,7 @@ func (b *BeaconState) UpdateBalancesAtIndex(idx primitives.ValidatorIndex, val u
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	bals := b.balances
-	if b.sharedFieldReferences[types.Balances].Refs() > 1 {
-		bals = b.balancesVal()
-		b.sharedFieldReferences[types.Balances].MinusRef()
-		b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
-	}
-
-	bals[idx] = val
-	b.balances = bals
+	b.balances[idx] = val
 	b.markFieldAsDirty(types.Balances)
 	b.addDirtyIndices(types.Balances, []uint64{uint64(idx)})
 	return nil
