@@ -143,17 +143,7 @@ func (b *BeaconState) UpdateSlashingsAtIndex(idx, val uint64) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	s := b.slashings
-	if b.sharedFieldReferences[types.Slashings].Refs() > 1 {
-		s = b.slashingsVal()
-		b.sharedFieldReferences[types.Slashings].MinusRef()
-		b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
-	}
-
-	s[idx] = val
-
-	b.slashings = s
-
+	b.slashings[idx] = val
 	b.markFieldAsDirty(types.Slashings)
 	return nil
 }
