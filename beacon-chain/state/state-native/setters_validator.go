@@ -106,8 +106,10 @@ func (b *BeaconState) UpdateBalancesAtIndex(idx primitives.ValidatorIndex, val u
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.sharedFieldReferences[types.Balances].MinusRef()
-	b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
+	if b.sharedFieldReferences[types.Balances].Refs() > 1 {
+		b.sharedFieldReferences[types.Balances].MinusRef()
+		b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
+	}
 
 	b.balances[idx] = val
 	b.markFieldAsDirty(types.Balances)
@@ -138,8 +140,10 @@ func (b *BeaconState) UpdateSlashingsAtIndex(idx, val uint64) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.sharedFieldReferences[types.Slashings].MinusRef()
-	b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
+	if b.sharedFieldReferences[types.Slashings].Refs() > 1 {
+		b.sharedFieldReferences[types.Slashings].MinusRef()
+		b.sharedFieldReferences[types.Slashings] = stateutil.NewRef(1)
+	}
 
 	b.slashings[idx] = val
 	b.markFieldAsDirty(types.Slashings)
@@ -176,8 +180,10 @@ func (b *BeaconState) AppendBalance(bal uint64) error {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.sharedFieldReferences[types.Balances].MinusRef()
-	b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
+	if b.sharedFieldReferences[types.Balances].Refs() > 1 {
+		b.sharedFieldReferences[types.Balances].MinusRef()
+		b.sharedFieldReferences[types.Balances] = stateutil.NewRef(1)
+	}
 
 	b.balances = append(b.balances, bal)
 	balIdx := len(b.balances) - 1
@@ -195,8 +201,10 @@ func (b *BeaconState) AppendInactivityScore(s uint64) error {
 		return errNotSupported("AppendInactivityScore", b.version)
 	}
 
-	b.sharedFieldReferences[types.InactivityScores].MinusRef()
-	b.sharedFieldReferences[types.InactivityScores] = stateutil.NewRef(1)
+	if b.sharedFieldReferences[types.InactivityScores].Refs() > 1 {
+		b.sharedFieldReferences[types.InactivityScores].MinusRef()
+		b.sharedFieldReferences[types.InactivityScores] = stateutil.NewRef(1)
+	}
 
 	b.inactivityScores = append(b.inactivityScores, s)
 	b.markFieldAsDirty(types.InactivityScores)
